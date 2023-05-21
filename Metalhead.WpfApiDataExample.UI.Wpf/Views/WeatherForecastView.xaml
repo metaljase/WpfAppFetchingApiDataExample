@@ -1,0 +1,24 @@
+﻿<UserControl x:Class="Metalhead.WpfApiDataExample.UI.Wpf.Views.WeatherForecastView"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:vm="clr-namespace:Metalhead.WpfApiDataExample.UI.Wpf.ViewModels" d:DataContext="{d:DesignInstance Type=vm:WeatherForecastViewModel}"
+             mc:Ignorable="d"
+             d:DesignHeight="450" d:DesignWidth="750">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+        <Button Grid.Row="0" Content="Refresh Weather Forecast" Command="{Binding RefreshCommand}" HorizontalAlignment="Center" Padding="10,5,10,5" Margin="10,10,10,10" VerticalAlignment="Top"/>
+        <DataGrid Grid.Row="1" AutoGenerateColumns="False" HorizontalAlignment="Stretch" CanUserAddRows="False" CanUserDeleteRows="False" ItemsSource="{Binding Forecasts, Mode=OneWay}">
+            <DataGrid.Columns>
+                <DataGridTextColumn Header="Date" Binding="{Binding Date, Mode=OneWay}" />
+                <DataGridTextColumn Header="Celsius" Binding="{Binding TemperatureC, Mode=OneWay}" />
+                <DataGridTextColumn Header="Fahrenheit" Binding="{Binding TemperatureF, Mode=OneWay}" />
+                <DataGridTextColumn Header="Summary" Binding="{Binding Summary, Mode=OneWay}" />
+            </DataGrid.Columns>
+        </DataGrid>
+    </Grid>
+</UserControl>
