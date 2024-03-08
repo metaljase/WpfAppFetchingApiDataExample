@@ -4,14 +4,9 @@ using Metalhead.WpfApiDataExample.UI.Core.Models;
 
 namespace Metalhead.WpfApiDataExample.UI.Core.Api;
 
-public class WeatherForecastEndpoint : IWeatherForecastEndpoint
+public class WeatherForecastEndpoint(ApiHelper apiHelper) : IWeatherForecastEndpoint
 {
-    private ApiHelper ApiHelper { get; }
-
-    public WeatherForecastEndpoint(ApiHelper apiHelper)
-    {
-        ApiHelper = apiHelper;
-    }
+    private ApiHelper ApiHelper { get; } = apiHelper;
 
     public async Task<IEnumerable<WeatherForecast>?> GetWeatherForecastsAsync()
     {

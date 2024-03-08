@@ -1,12 +1,13 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Options;
 using System;
-using System.IO;
 using System.Net.Http.Headers;
 using System.Windows;
 
 using Metalhead.WpfApiDataExample.UI.Core.Api;
+using Metalhead.WpfApiDataExample.UI.Core.Models;
 using Metalhead.WpfApiDataExample.UI.Wpf.ViewModels;
 using Metalhead.WpfApiDataExample.UI.Wpf.Views;
 
@@ -20,63 +21,50 @@ public partial class App : Application
     public IHost Host { get; }
 
     public App()
-    {        
-        Host = Microsoft.Extensions.Hosting.Host
-            .CreateDefaultBuilder()
-            .ConfigureAppConfiguration(hostConfig =>
-            {
-                hostConfig.SetBasePath(Directory.GetCurrentDirectory());
-            })
-            .ConfigureAppConfiguration((hostingContext, hostConfig) =>
-            {
-                hostConfig.AddConfiguration(GetConfiguration(hostConfig));
-            })
-            .ConfigureServices((hostContext, services) =>
-            {
-                services.AddSingleton<ILogger, DebugLogger>();
-                services.AddSingleton<ApiHelper>();
-                services.AddSingleton<WeatherForecastEndpoint>();
+    {
+        var builder = Microsoft.Extensions.Hosting.Host.CreateApplicationBuilder();
 
-                services.AddSingleton<ShellViewModel>();
-                services.AddTransient<WeatherForecastViewModel>();
+        builder.Services.AddOptions<WeatherForecastOptions>()
+            .Bind(builder.Configuration.GetSection(WeatherForecastOptions.WeatherForecast))
+            .ValidateDataAnnotations()
+            .ValidateOnStart();
 
-                services.AddSingleton<ShellView>();
-                services.AddTransient<WeatherForecastView>();
+        builder.Services.AddSingleton<ILogger, DebugLogger>();
+        builder.Services.AddSingleton(sp => sp.GetRequiredService<IOptions<WeatherForecastOptions>>().Value);
+        builder.Services.AddSingleton<ApiHelper>();
+        builder.Services.AddSingleton<WeatherForecastEndpoint>();
 
-                // HttpClient needs to be registered after ApiHelper otherwise BaseAddress etc will not be set.
-                string apiUrl = hostContext.Configuration.GetValue<string>("ApiBaseUrl")!;
-                services.AddHttpClient<ApiHelper>(client =>
-                {
-                    client.BaseAddress = new Uri(apiUrl);
-                    client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-                });
-            })
-            .Build();
+        builder.Services.AddSingleton<ShellViewModel>();
+        builder.Services.AddTransient<WeatherForecastViewModel>();
+
+        builder.Services.AddSingleton<ShellView>();
+        builder.Services.AddTransient<WeatherForecastView>();
+
+        builder.Services.AddHttpClient<ApiHelper>(client =>
+        {
+            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+        });
+        
+        Host = builder.Build();
     }
 
     public new static App Current => (App)Application.Current;
-
-    private static IConfigurationRoot GetConfiguration(IConfigurationBuilder builder)
-    {
-        builder.SetBasePath(Directory.GetCurrentDirectory())
-            .AddJsonFile("appsettings.json", false, true);
-
-        return builder.Build();
-    }
 
     protected override async void OnStartup(StartupEventArgs e)
     {
         await Host!.StartAsync();
 
+        using var serviceScope = Host.Services.CreateScope();
+        var serviceProvider = serviceScope.ServiceProvider;        
+
         try
         {
-            Host.Services.GetRequiredService<ShellView>().Show();
-
+            serviceProvider.GetRequiredService<ShellView>().Show();
             base.OnStartup(e);
         }
         catch (Exception)
         {
-            ILogger logger = Host.Services.GetRequiredService<ILogger>();
+            ILogger logger = serviceProvider.GetRequiredService<ILogger>();
             logger.Log("Application exited unexpectedly.");
             Environment.Exit(0);
         }

@@ -1,12 +1,15 @@
-﻿namespace Metalhead.WpfApiDataExample.UI.Core.Api;
+﻿using Metalhead.WpfApiDataExample.UI.Core.Models;
+
+namespace Metalhead.WpfApiDataExample.UI.Core.Api;
 
 public class ApiHelper : IApiHelper
 {
     private readonly HttpClient _httpClient;
 
-    public ApiHelper(HttpClient httpClient)
+    public ApiHelper(HttpClient httpClient, WeatherForecastOptions weatherForecastOptions)
     {
         _httpClient = httpClient;
+        _httpClient.BaseAddress = new Uri(weatherForecastOptions.ApiBaseUrl);
     }
 
     public async ValueTask<string> Get(string endpoint)

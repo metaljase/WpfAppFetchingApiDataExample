@@ -4,10 +4,10 @@ namespace Metalhead.WpfApiDataExample.DataManager.Core.DataAccess;
 
 public class WeatherForecastData : IWeatherForecastData
 {
-    private static readonly string[] s_summaries = new[]
-    {
+    private static readonly string[] s_summaries =
+    [
         "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-    };
+    ];
 
     public IEnumerable<WeatherForecast> GetWeatherForecast()
     {
