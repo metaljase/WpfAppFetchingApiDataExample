@@ -1,5 +1,5 @@
 # What is WpfAppFetchingApiDataExample?
-WpfAppFetchingApiDataExample is an example of how a .NET WPF app can fetch data from an ASP.NET Web API and display it.
+`WpfAppFetchingApiDataExample` is an example of how a .NET WPF app can fetch data from an ASP.NET Web API and display it.
 
 The .NET solution contains four projects, which include:
 - ASP.NET Web API, based on the weather forecast project included with Visual Studio as a template.
@@ -7,12 +7,13 @@ The .NET solution contains four projects, which include:
 - Class library for the WPF app.
 - Class library for data access.
 
-NOTE: Exception handling, resilient HTTP calls, proper logging etc, have been omitted on purpose to simplify this example.
+> [!NOTE]
+> Exception handling, resilient HTTP calls, proper logging etc, have been omitted on purpose to simplify this example.
 
 # Setup instructions
-1) Clone the WpfAppFetchingApiDataExample repository.
+1) Clone the `WpfAppFetchingApiDataExample` repository.
 
-2) Open the .NET solution in Visual Studio 2022 (or a compatible alternative).
+2) Open the .NET solution in Visual Studio 2026 (or a compatible alternative).
 
 3) Set both `WpfApiDataExample.DataManager.Api` and `WpfApiDataExample.UI.Wpf` as startup projects.
 
